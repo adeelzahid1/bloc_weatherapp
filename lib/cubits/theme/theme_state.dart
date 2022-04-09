@@ -5,7 +5,7 @@ class ThemeState extends Equatable {
   const ThemeState({this.appTheme = AppTheme.light});
 
 factory ThemeState.initial(){
-  return ThemeState();
+  return const ThemeState();
 }
 
   @override
