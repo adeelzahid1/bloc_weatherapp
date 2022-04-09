@@ -10,7 +10,7 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget { 
+class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
@@ -27,19 +27,24 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<TempSettingsBloc>(
               create: (context) => TempSettingsBloc()),
-          BlocProvider<ThemeBloc>(create: (context) => ThemeBloc(weatherBloc: context.read<WeatherBloc>())),
+          BlocProvider<ThemeBloc>(create: (context) => ThemeBloc()),
         ],
-        child: BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, state) {
-            return MaterialApp(
-              title: 'Weather App',
-              debugShowCheckedModeBanner: false,
-              theme: state.appTheme == AppTheme.light
-                  ? ThemeData.light()
-                  : ThemeData.dark(),
-              home: const HomePage(),
-            );
+        child: BlocListener<WeatherBloc, WeatherState>(
+          listener: (context, state) {
+            context.read<ThemeBloc>().setTheme(state.weather.theTemp);
           },
+          child: BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, state) {
+              return MaterialApp(
+                title: 'Weather App',
+                debugShowCheckedModeBanner: false,
+                theme: state.appTheme == AppTheme.light
+                    ? ThemeData.light()
+                    : ThemeData.dark(),
+                home: const HomePage(),
+              );
+            },
+          ),
         ),
       ),
     );
