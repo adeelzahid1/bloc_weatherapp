@@ -1,6 +1,4 @@
-import 'package:bloc_weatherapp/cubits/temp_settings/temp_settings_cubit.dart';
-import 'package:bloc_weatherapp/cubits/theme/theme_cubit.dart';
-import 'package:bloc_weatherapp/cubits/weather/weather_cubit.dart';
+import 'blocs/blocs.dart';
 import 'package:bloc_weatherapp/pages/home_page.dart';
 import 'package:bloc_weatherapp/repositories/weather_repository.dart';
 import 'package:bloc_weatherapp/services/weather_api_service.dart';
@@ -12,7 +10,7 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget { 
   const MyApp({Key? key}) : super(key: key);
 
   @override
@@ -23,30 +21,25 @@ class MyApp extends StatelessWidget {
       ),
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<WeatherCubit>(
-            create: (context) => WeatherCubit(
+          BlocProvider<WeatherBloc>(
+            create: (context) => WeatherBloc(
                 weatherRepository: context.read<WeatherRepository>()),
           ),
-          BlocProvider<TempSettingsCubit>(
-              create: (context) => TempSettingsCubit()),
-          BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
+          BlocProvider<TempSettingsBloc>(
+              create: (context) => TempSettingsBloc()),
+          BlocProvider<ThemeBloc>(create: (context) => ThemeBloc(weatherBloc: context.read<WeatherBloc>())),
         ],
-        child: BlocListener<WeatherCubit, WeatherState>(
-          listener: (context, state) {
-            context.read<ThemeCubit>().setTheme(state.weather.theTemp);
+        child: BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, state) {
+            return MaterialApp(
+              title: 'Weather App',
+              debugShowCheckedModeBanner: false,
+              theme: state.appTheme == AppTheme.light
+                  ? ThemeData.light()
+                  : ThemeData.dark(),
+              home: const HomePage(),
+            );
           },
-          child: BlocBuilder<ThemeCubit, ThemeState>(
-            builder: (context, state) {
-              return MaterialApp(
-                title: 'Weather App',
-                debugShowCheckedModeBanner: false,
-                theme: state.appTheme == AppTheme.light
-                    ? ThemeData.light()
-                    : ThemeData.dark(),
-                home: const HomePage(),
-              );
-            },
-          ),
         ),
       ),
     );

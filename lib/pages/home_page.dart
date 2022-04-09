@@ -1,12 +1,10 @@
-
-import 'package:bloc_weatherapp/cubits/temp_settings/temp_settings_cubit.dart';
-import 'package:bloc_weatherapp/cubits/weather/weather_cubit.dart';
 import 'package:bloc_weatherapp/pages/search_page.dart';
 import 'package:bloc_weatherapp/pages/settings_page.dart';
 import 'package:bloc_weatherapp/widgets/error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/blocs.dart';
 import '../constants/constants.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,7 +28,7 @@ class _HomePageState extends State<HomePage> {
                _city = await Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage())),
                 print(_city),
                 if(_city!=null){
-                  context.read<WeatherCubit>().fetchWeather(_city!),
+                  context.read<WeatherBloc>().add(FetchWeatherEvent(city: _city!)),
                 }
              },
               icon: const Icon(Icons.search),
@@ -47,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   }
 
  String showTemperature(double temperature){
-   final tempUnit = context.watch<TempSettingsCubit>().state.tempUnit;
+   final tempUnit = context.watch<TempSettingsBloc>().state.tempUnit;
    if(tempUnit == TempUnit.fahrenheit){
      return ((temperature * 9/5 ) +32).toStringAsFixed(2) + ' ℉';
    }
@@ -65,7 +63,7 @@ class _HomePageState extends State<HomePage> {
   
 
   Widget _showWeather(){
-    return BlocConsumer<WeatherCubit, WeatherState>(
+    return BlocConsumer<WeatherBloc, WeatherState>(
        listener: (context, state) {
          if(state.status == WeatherStatus.error){
            errorDialog(context, state.error.errMsg);
