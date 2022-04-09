@@ -1,4 +1,3 @@
-
 import 'package:bloc_weatherapp/cubits/temp_settings/temp_settings_cubit.dart';
 import 'package:bloc_weatherapp/cubits/theme/theme_cubit.dart';
 import 'package:bloc_weatherapp/cubits/weather/weather_cubit.dart';
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
                 theme: state.appTheme == AppTheme.light
                     ? ThemeData.light()
                     : ThemeData.dark(),
-                home: HomePage(),
+                home: const HomePage(),
               );
             },
           ),
